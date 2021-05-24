@@ -19,7 +19,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: basic-fim-scanner
-        image: us.gcr.io/{your-project-id}/basic-fim:latest
+        image: gauravkr19/train-schedule
         resources:
           limits:
             memory: 2Gi
@@ -32,11 +32,17 @@ spec:
           readOnly: true
         - name: logs
           mountPath: /logs
+      - name: log-container
+        image: busybox
+        args: [/bin/sh, -c, 'tail -n+1 -f /logs/scan.log']
+        volumeMounts:
+        - name: logs
+          mountPath: /logs      
       terminationGracePeriodSeconds: 30
       volumes:
       - name: host-fs
         hostPath:
-          path: /
+          path: /var/log
       - name: logs
         hostPath:
           path: /var/log/basic-fim
